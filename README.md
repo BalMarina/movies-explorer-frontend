@@ -1,1 +1,1 @@
-# movies-explorer-frontend
+Ссылка на макет: https://drive.google.com/file/d/1FHbn2OBRSC1LAAxtsFnzPtwOgc4AF6Ml/view?usp=sharing 

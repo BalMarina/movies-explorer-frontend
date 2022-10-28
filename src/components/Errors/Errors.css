@@ -1,0 +1,21 @@
+.message {
+    width: 100%;
+    margin-top: auto;
+    min-height: 13px;
+    margin-bottom: 20px;
+}
+
+.message__text {
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #FF004C;
+    margin: 0;
+}
+
+@media screen and (max-width: 769px) {
+    .message {
+        margin-top: 0;
+    }
+
+}

@@ -1,0 +1,137 @@
+.techs {
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    padding: 100px 70px;
+    background-color: #f5f5f5;
+}
+
+/* .techs::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40px;
+    right: -40px;
+    bottom: 0;
+    z-index: 0;
+} */
+
+.techs__head {
+    border-bottom: 1px #000 solid;
+    padding-bottom: 20px;
+    margin-top: 0;
+    margin-bottom: 65px;
+    color: #000;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 27px;
+}
+
+.techs__title {
+    position: relative;
+    flex-grow: 460px;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 1.16;
+    z-index: 1;
+    text-align: center;
+    margin: 90px auto 0;
+    max-width: 460px;
+}
+
+.techs__description {
+    position: relative;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    margin: 26px auto 0;
+    max-width: 460px;
+}
+
+.techs__list {
+    position: relative;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(84px, 90px));
+    grid-template-rows: minmax(57px, 60px);
+    gap: 10px;
+    margin: 100px 0 0;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
+.techs__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #e8e8e8;
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .techs {
+        padding: 90px 50px;
+    }
+
+    .techs__title {
+        margin-top: 80px;
+    }
+
+    .techs__description {
+        margin-top: 22px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .techs__list {
+        margin-top: 83px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .techs {
+        padding: 70px 18px;
+        background-color: transparent;
+    }
+
+    .techs__head {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 22px;
+        letter-spacing: -0.04em;
+        padding-bottom: 28px;
+        margin-bottom: 0;
+    }
+
+    .techs__title {
+        font-weight: 400;
+        font-size: 30px;
+        line-height: 36px;
+        letter-spacing: -0.04em;
+        margin-top: 60px;
+    }
+
+    .techs__description {
+        max-width: 292px;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 16px;
+    }
+
+    .techs__list {
+        margin-top: 50px;
+        grid-template-columns: repeat(2, 84px);
+        grid-template-rows: repeat(4, 57px)
+    }
+}
