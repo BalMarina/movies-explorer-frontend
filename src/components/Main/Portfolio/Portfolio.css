@@ -18,13 +18,23 @@
     padding: 0;
 }
 
+.portfolio__li {
+    list-style: none;
+}
+
 .portfolio__item {
     display: flex;
     justify-content: space-between;
     padding-top: 20px;
     padding-bottom: 19px;
     border-bottom: 1px #E8E8E8 solid;
-    list-style: none;
+    text-decoration: none;
+    color: #000;
+}
+
+.portfolio__item:hover {
+    cursor: pointer;
+    opacity: .7;
 }
 
 .portfolio__name {
@@ -34,18 +44,8 @@
     margin: 0;
 }
 
-.portfolio__link {
-    width: 25px;
-    display: flex;
-}
-
-.portfolio__link:hover {
-    cursor: pointer;
-    opacity: .7;
-}
-
 .portfolio__icon {
-    width: 100%;
+    width: 25px;
     object-fit: contain;
 }
 

@@ -26,7 +26,7 @@ function SearchForm() {
                         name='shortFilms'
                         id="shortFilms"
                     />
-                    <label for='shortFilms' className='search__label-checkbox'>
+                    <label htmlFor='shortFilms' className='search__label-checkbox'>
                     </label>
                     <p className='search__shorts-name'>Короткометражки</p>
                 </div>

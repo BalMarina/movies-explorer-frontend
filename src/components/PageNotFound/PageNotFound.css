@@ -5,8 +5,9 @@
   width: 100%;
   justify-content: center;
   align-items: center;
-  padding: 60px 0;
   color: #000;
+  position: absolute;
+  top: 35%;
 }
 
 .notfound__description {
@@ -36,10 +37,11 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
-  color: #000;
+  color: #3456F3;
   text-decoration: none;
   border: none;
   background: transparent;
+  margin-top: 184px;
 }
 
 .notfound__link:hover {
@@ -49,10 +51,6 @@
 
 
 @media screen and (max-width: 767px) {
-
-  .notfound {
-    padding: 30px 0;
-  }
 
   .notfound__title {
     font-size: 80px;
@@ -66,6 +64,5 @@
   .notfound__link {
     font-size: 12px;
     line-height: 1.25;
-    margin-top: 184px;
   }
 }
