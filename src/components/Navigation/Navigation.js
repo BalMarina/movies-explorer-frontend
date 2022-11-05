@@ -18,7 +18,7 @@ function Navigation() {
     }
 
     return (
-        <nav className={`menu ${isClicked ? 'menu_open' : ''}`}>
+        <nav className={`menu ${isClicked ? 'menu_open' : ''}`} >
             <div className={`${isClicked ? 'menu__layout' : ''} `}>
                 {isLogged ? (
                     <>

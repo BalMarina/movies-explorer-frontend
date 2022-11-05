@@ -32,9 +32,9 @@
   opacity: .8;
 }
 
-.movies-list__conrainer div:nth-of-type(1n+13) {
+/* .movies-list__conrainer div:nth-of-type(1n+13) {
   display: none;
-}
+} */
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {
   .movies-list__conrainer {
@@ -43,9 +43,9 @@
     gap: 36px;
   }
 
-  .movies-list__conrainer div:nth-of-type(1n+9) {
+  /* .movies-list__conrainer div:nth-of-type(1n+9) {
     display: none;
-  }
+  } */
 }
 
 @media screen and (max-width: 767px) {
@@ -63,7 +63,7 @@
     gap: 16px;
   }
 
-  .movies-list__conrainer div:nth-of-type(1n+6) {
+  /* .movies-list__conrainer div:nth-of-type(1n+6) {
     display: none;
-  }
+  } */
 }

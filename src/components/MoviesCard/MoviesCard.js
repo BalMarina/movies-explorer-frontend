@@ -3,7 +3,7 @@ import './MoviesCard.css';
 import { useState } from 'react';
 
 
-function MoviesCard({ isSavedMovies, title, duration, src }) {
+function MoviesCard({ isSavedMovies, movie }) {
 
     const [isSaved, setIsSaved] = useState(isSavedMovies);
 
@@ -24,8 +24,8 @@ function MoviesCard({ isSavedMovies, title, duration, src }) {
         <div className='movie'>
             <div className='movie__bio'>
                 <div className='movie__info'>
-                    <h2 className='movie__title'>{title}</h2>
-                    <p className='movie__duration'>{duration}</p>
+                    <h2 className='movie__title'>{movie.nameRU}</h2>
+                    <p className='movie__duration'>{movie.duration}</p>
                 </div>
                 <button
                     className={`movie__btn movie__save-btn ${isSavedClass}`}
@@ -35,7 +35,7 @@ function MoviesCard({ isSavedMovies, title, duration, src }) {
                 />
             </div>
             <a className='movie__link' href='' target='_blank' rel='noreferrer'>
-                <img className='movie__pic' src={src} alt='Фильм' />
+                <img className='movie__pic' src={`https://api.nomoreparties.co/${movie.image.url}`} alt='Фильм' />
             </a>
         </div>
     );

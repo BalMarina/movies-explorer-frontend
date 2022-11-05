@@ -1,10 +1,47 @@
 import './Profile.css';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Header from '../Header/Header';
+import { useFormWithValidation } from '../../hooks/useForm';
 
-function Profile({ onSignOut, onUpdate, infoMessage }) {
+function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
+
+  const currentUser = useContext(CurrentUserContext);
 
   const [isClicked, setIsClicked] = useState(false);
+  const { values, errors, isValid, handleChange, resetForm } = useFormWithValidation();
+  const [isInputActive, setIsInputActive] = useState(false);
+
+  React.useEffect(() => {
+    if (currentUser) {
+      resetForm({
+        name: currentUser.name,
+        email: currentUser.email,
+      });
+    }
+  }, [resetForm, currentUser]);
+
+  React.useEffect(() => {
+    if (currentUser.name === values.name && currentUser.email === values.email) {
+      resetForm(false);
+    }
+  }, [resetForm, values, currentUser]);
+
+  // React.useEffect(() => {
+  //   if (infoMessage.isShown && infoMessage.code === 200) {
+  //     setIsInputActive(false);
+  //   }
+  // }, [setIsInputActive]);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onUpdate(values.name, values.email);
+  };
+
+  function handleEditProfile() {
+    setIsInputActive(true);
+    setIsClicked(!isClicked)
+  };
 
   function handleEditClick() {
     setIsClicked(!isClicked)
@@ -14,40 +51,65 @@ function Profile({ onSignOut, onUpdate, infoMessage }) {
     <><Header />
       <section className='profile'>
         <div className='profile__container'>
-          <h1 className='profile__title'>Привет, Виталий!</h1>
-          <form className='profile__form'>
+          <h1 className='profile__title'>{`Привет, ${currentUser.name}!`}</h1>
+          <form className='profile__form' onSubmit={handleSubmit}>
             <label className='profile__label'>Имя
-              <input className='profile__input'></input>
+              <input
+                className='profile__input'
+                value={values.name}
+                onChange={handleChange}
+                disabled={!isInputActive}
+                type='text'
+                minLength='2'
+                maxLength='30'
+                required
+                title='Разрешено использовать латиницу, кириллицу, пробел или дефис'
+                pattern='^[A-Za-zА-Яа-яЁё /s -]+$'
+              >
+              </input>
             </label>
             <label className='profile__label'>Email
-              <input className='profile__input'></input>
+              <input
+                type='email'
+                className='profile__input'
+                value={values.email}
+                onChange={handleChange}
+                disabled={!isInputActive}
+                minLength='2'
+                maxLength='30'
+                required
+              >
+              </input>
             </label>
           </form>
         </div>
-        {isClicked ? (
-          <button
-            className={`profile__button profile__button_submit `}
-            type='submit'
-            onClick={handleEditClick}
-          >
-            Сохранить
-          </button>
-        ) : (
+        {!isClicked ? (
           <>
             <button
               className={`profile__button profile__button_edit`}
               type='button'
-              onClick={handleEditClick}
+              onClick={handleEditProfile}
             >
               Редактировать
             </button>
             <button
               className='profile__button profile__button_logout'
               type='button'
+            // onClick={handleEditProfile}
             >
               Выйти из аккаунта
             </button>
           </>
+        ) : (
+          <button
+            className={`profile__button profile__button_submit `}
+            type='submit'
+            onClick={handleEditClick}
+            onSubmit={handleSubmit}
+            disabled={!isValid}
+          >
+            Сохранить
+          </button>
         )
         }
       </section>
