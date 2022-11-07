@@ -1,29 +1,19 @@
 import './Login.css';
 import { useState } from 'react';
 import { useFormWithValidation } from '../../hooks/useForm';
+import Errors from '../Errors/Errors';
 import Logo from '../../images/logo.svg'
 
-function Login({ onLogin, infoMessage }) {
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function Login({ onLogin }) {
 
   const { values, errors, isValid, handleChange } = useFormWithValidation();
 
-  function handleEmail(e) {
-    setEmail(e.target.value)
-  }
-
-  function handlePassword(e) {
-    setPassword(e.target.value)
-  };
-
   function handleSubmit(e) {
     e.preventDefault();
-    if (!email || !password) {
+    if (!values.email || !values.password) {
       return;
     }
-    onLogin(email, password);
+    onLogin(values.email, values.password);
   }
 
   return (
@@ -34,27 +24,38 @@ function Login({ onLogin, infoMessage }) {
         <form className='login__form' onSubmit={handleSubmit}>
           <label className='login__label'>Email
             <input
+              name='email'
               className='login__input'
               value={values.email}
-              onChange={handleEmail}
+              onChange={handleChange}
               type='email'
               minLength='2'
               maxLength='30'
-              required></input>
+              required>
+            </input>
+            <Errors isShown={Boolean(errors.email)}>
+              Проверьте, что поле заполнено и соответствует стандартам email: name@example.com
+            </Errors>
           </label>
           <label className='login__label'>Пароль
             <input
+              name='password'
               className='login__input' value={values.password}
-              onChange={handlePassword}
+              onChange={handleChange}
               type='password'
               minLength='4'
               maxLength='20'
-              required></input>
+              required>
+            </input>
+            <Errors isShown={Boolean(errors.password)}>
+              Пароль не может быть короче 6 символов
+            </Errors>
           </label>
           <button
             className='login__button'
             type='submit'
             onSubmit={handleSubmit}
+            disabled={!isValid}
           >
             Войти
           </button>

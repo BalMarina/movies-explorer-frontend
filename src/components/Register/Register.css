@@ -68,6 +68,15 @@
     cursor: pointer;
 }
 
+.register__button:hover {
+    opacity: .7;
+}
+
+.register__button:disabled {
+    opacity: .7;
+    cursor: auto;
+}
+
 .register__signin-text {
     text-align: center;
     font-weight: 400;

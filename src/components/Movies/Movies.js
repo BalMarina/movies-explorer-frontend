@@ -2,30 +2,21 @@ import './Movies.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import SearchForm from './SearchForm/SearchForm';
-import { filterShorts, filterMovies } from '../../utils/utils';
 import getMovies from '../../utils/MoviesApi';
+import mainApi from '../../utils/MainApi';
+import { filterMovies, getLocalStorageIfExists } from '../../utils/utils'
+import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
+import { getValue } from '@testing-library/user-event/dist/utils';
 
-function Movies() {
-
+function Movies({ onMovieSave }) {
+  const savedMovies = useContext(SavedMoviesContext)
+  const savedMoviesIds = savedMovies.map(v => v.movieId)
   // const shortsFilterButton = localStorage.getItem('shorts') === 'on' ? 'on' : 'off';
 
-  const storedSearchJSON = localStorage.getItem('searchSettings');
-
-  let initialMovies = [];
-
-  let initialSearchFormState = {}
-
-  if (storedSearchJSON) {
-    try {
-      const storedSearch = JSON.parse(storedSearchJSON)
-      initialMovies = storedSearch.movies
-      initialSearchFormState = { search: storedSearch.search, isShorts: storedSearch.isShorts }
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  const initialMovies = getLocalStorageIfExists('moviesFound') || [];
+  const initialSearchFormState = getLocalStorageIfExists('searchSettings') || {};
 
   // состояния запросов
   // const [search, setSearch] = React.useState('');
@@ -55,23 +46,17 @@ function Movies() {
   //   }
   // }, [search, shorts, notFilteredMovies])
 
-  function filterMovies(movies, query, isShorts) {
-    const searchParams = ['nameEN', 'nameRU'];
-    let result = movies
-      .filter(
-        movie => searchParams.some(
-          param => movie[param]
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        )
-      )
+  const savedMoviesIdsJSON = JSON.stringify(savedMoviesIds)
+  const filteredMoviesJSON = JSON.stringify(filteredMovies.map(v => v.id))
 
-    if (isShorts === true) {
-      result = result.filter(movie => movie.duration <= 40)
+  useEffect(() => {
+    if (savedMoviesIds.length > 0) {
+      const filteredMoviesWithSaved = filteredMovies.map(v => {
+        return { ...v, isSaved: savedMoviesIds.includes(v.id) }
+      })
+      setFilteredMovies(filteredMoviesWithSaved)
     }
-
-    return result
-  }
+  }, [savedMoviesIdsJSON, filteredMoviesJSON])
 
   function handleSearch(search, isShorts) {
     setIsMoviesLoading(true);
@@ -79,20 +64,32 @@ function Movies() {
     localStorage.setItem('searchQuery', search);
     localStorage.setItem('shorts', isShorts);
 
-    getMovies()
-      .then((data) => {
-        // changeMovies(data);
-        // setNotFilteredMovies(data);
-        // handleSetFilteredMovies(data, value, shorts);
-        const movies = filterMovies(data, search, isShorts);
-        setFilteredMovies(movies)
-        localStorage.setItem('searchSettings', JSON.stringify({ isShorts, search, movies }))
-      })
-      .catch((err) => {
-        setIsError(true);
-        console.log(err);
-      })
-      .finally(() => setIsMoviesLoading(false))
+    let allMovies = []
+    const storedMoviesJSON = localStorage.getItem('allMovies')
+    if (storedMoviesJSON) {
+      try {
+        allMovies = JSON.parse(storedMoviesJSON)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if (allMovies.length === 0) {
+      getMovies()
+        .then((data) => {
+          localStorage.setItem('allMovies', JSON.stringify(data))
+          allMovies = data
+          updateFilteredMovies(allMovies, search, isShorts)
+        })
+        .catch((err) => {
+          setIsError(true);
+          console.log(err);
+        })
+        .finally(() => setIsMoviesLoading(false))
+    } else {
+      updateFilteredMovies(allMovies, search, isShorts)
+      setIsMoviesLoading(false)
+    }
 
     // if (!notFilteredMovies.length) {
     //   getMovies()
@@ -112,6 +109,13 @@ function Movies() {
     // }
   }
 
+  function updateFilteredMovies(allMovies, search, isShorts) {
+    const movies = filterMovies(allMovies, search, isShorts)
+    setFilteredMovies(movies)
+    localStorage.setItem('searchSettings', JSON.stringify({ isShorts, search }))
+    localStorage.setItem('moviesFound', JSON.stringify(movies))
+  }
+
   // function handleSetFilteredMovies(movies, query, checkbox) {
   //   const moviesList = filterMovies(movies, query);
   //   setFilteredMovies(checkbox === 'on' ? filterShorts(moviesList) : moviesList);
@@ -128,6 +132,16 @@ function Movies() {
   //   arr.length === 0 ? setIsNotFound(true) : setIsNotFound(false);
   // }
 
+  function handleToggleSaved(movie) {
+    const savedMovie = savedMovies.find(v => v.movieId === movie.id)
+    return onMovieSave({ ...movie, _id: savedMovie?._id })
+      .catch((err) => {
+        setIsError(true);
+        console.log(err);
+      })
+      .finally(() => setIsMoviesLoading(false))
+  }
+
   return (
     <>
       <Header />
@@ -135,12 +149,14 @@ function Movies() {
         <SearchForm
           onSearchClick={handleSearch}
           initialState={initialSearchFormState}
+          disabled={isMoviesLoading}
         // onCheckbox={handleShorts}
         // shortFilms={shorts}
         />
         <MoviesCardList
           list={filteredMovies}
-          isEmptyList={isNotFound}
+          onToggleSaved={handleToggleSaved}
+          loading={isMoviesLoading}
         />
       </section>
       <Footer />

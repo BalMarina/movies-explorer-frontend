@@ -2,7 +2,11 @@ import './SearchForm.css';
 import React, { useState } from 'react';
 import SearchIcon from '../../../images/search-icon.svg';
 
-function SearchForm({ onSearchClick, initialState = { search: '', isShorts: false } }) {
+function SearchForm({
+    onSearchClick,
+    initialState = { search: '', isShorts: false },
+    disabled = false,
+}) {
     const [searchValue, setSearchValue] = useState(initialState.search)
     const [isShorts, setIsShorts] = useState(initialState.isShorts)
 
@@ -17,6 +21,7 @@ function SearchForm({ onSearchClick, initialState = { search: '', isShorts: fals
 
     const handleIsShortsChange = (e) => {
         setIsShorts(e.target.checked)
+        onSearchClick(searchValue, e.target.checked)
     }
 
     return (
@@ -31,10 +36,12 @@ function SearchForm({ onSearchClick, initialState = { search: '', isShorts: fals
                         placeholder='Фильм'
                         required
                         value={searchValue}
+                        disabled={disabled}
                     />
                     <button
                         className='search__button'
                         type='submit'
+                        disabled={disabled}
                     />
                 </div>
                 <div className='search__shorts'>
@@ -44,6 +51,7 @@ function SearchForm({ onSearchClick, initialState = { search: '', isShorts: fals
                         id="shortFilms"
                         checked={isShorts}
                         onChange={handleIsShortsChange}
+                        disabled={disabled}
                     />
                     <label htmlFor='shortFilms' className='search__label-checkbox'>
                     </label>

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useState } from 'react';
 import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 // import Header from '../Header/Header';
 // import Footer from '../Footer/Footer';
@@ -18,7 +20,8 @@ function App() {
 
   const [currentUser, setCurrentUser] = React.useState({});
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [isSavedMovies, setIsSavedMovies] = React.useState([]);
+  const [savedMovies, setSavedMovies] = React.useState([]);
+  const [isError, setIsError] = useState('');
 
   React.useEffect(() => {
     tokenCheck()
@@ -37,9 +40,11 @@ function App() {
 
       mainApi.getMovies()
         .then((data) => {
-          setIsSavedMovies(data)
+          setSavedMovies(data)
+          setIsError(false);
         })
         .catch(err => {
+          setIsError(true);
           console.log(err);
         })
     }
@@ -63,7 +68,7 @@ function App() {
   function handleRegister(name, email, password) {
     mainApi.register(name, email, password)
       .then(res => {
-        const { token } = res;
+        const { data: { token } } = res;
         localStorage.setItem('jwt', token)
         handleLogged();
         // else {
@@ -72,7 +77,7 @@ function App() {
       })
       .catch(err => {
         console.log(err);
-        // handleInfoTooltip(false); выводим сообщение об ошибке
+        setIsError(true);
       })
   }
 
@@ -89,23 +94,30 @@ function App() {
       })
   }
 
-  function handleSaveMovie(movie) {
-    const isLSaved = movie.likes.some(i => i._id === currentUser._id);
+  function handleSignOut() {
+    setLoggedIn(false);
+    setCurrentUser({});
+    localStorage.clear();
+    Navigate('/');
+  };
 
-    mainApi.saveMovie(movie, !isLSaved)
-      .then((isSavedMovies) => {
-        setIsSavedMovies((state) =>
-          state.map((c) => c._id === movie._id ? isSavedMovies : c));
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }
+  // function handleSaveMovie(movie) {
+  //   const isLSaved = movie.likes.some(i => i._id === currentUser._id);
+
+  //   mainApi.saveMovie(movie, !isLSaved)
+  //     .then((isSavedMovies) => {
+  //       setSavedMovies((state) =>
+  //         state.map((c) => c._id === movie._id ? isSavedMovies : c));
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     })
+  // }
 
   function handleDeleteMovie(movie) {
     mainApi.deleteMovie(movie._id)
       .then(() => {
-        setIsSavedMovies((state) =>
+        setSavedMovies((state) =>
           state.filter((c) => c._id !== movie._id));
       })
       .catch(err => {
@@ -113,8 +125,8 @@ function App() {
       })
   }
 
-  function handleUpdateUser(userData) {
-    mainApi.updateUserProfile(userData)
+  function handleUpdateUser(name, email) {
+    mainApi.updateUserProfile(name, email)
       .then((data) => {
         setCurrentUser(data);
       })
@@ -123,57 +135,86 @@ function App() {
       })
   }
 
+  function handleSaveMovie(movie) {
+    if (!movie.isSaved) {
+      const requestData = {
+        ...movie,
+        image: `https://api.nomoreparties.co${movie.image.url}`,
+        thumbnail: `https://api.nomoreparties.co${movie.image.formats.thumbnail.url}`,
+      }
+      return mainApi.saveMovie(requestData)
+        .then((res) => {
+          setSavedMovies(state => [...state, res.data]);
+        })
+    }
+    return mainApi.deleteMovie(movie._id)
+      .then(() => {
+        setSavedMovies(state => state.filter(v => v._id !== movie._id));
+      })
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <BrowserRouter>
-        <Routes>
+      <SavedMoviesContext.Provider value={savedMovies}>
+        <BrowserRouter>
+          <Routes>
 
-          <Route
-            path='/' exact
-            element={<Main />}
-          />
+            <Route
+              path='/' exact
+              element={<Main />}
+            />
 
-          <Route
-            path='/movies' exact
-            element={<ProtectedRoute
-              loggedIn={loggedIn}
-              component={Movies}
-              path='/movies' />
-            }
-          />
+            <Route
+              path='/movies' exact
+              element={<ProtectedRoute
+                loggedIn={loggedIn}
+                component={Movies}
+                onMovieSave={handleSaveMovie}
+                path='/movies' />
+              }
+            />
 
-          <Route
-            path='/saved-movies' exact
-            element={<ProtectedRoute
-              loggedIn={loggedIn}
-              component={SavedMovies}
-              path='/saved-movies' />
-            }
-          />
+            <Route
+              path='/saved-movies' exact
+              element={<ProtectedRoute
+                loggedIn={loggedIn}
+                component={SavedMovies}
+                onMovieSave={handleSaveMovie}
+                isError={isError}
+                path='/saved-movies' />
+              }
+            />
 
-          <Route
-            path='/profile' exact
-            element={<ProtectedRoute
-              loggedIn={loggedIn}
-              component={Profile}
-              path='/profile' />
-            }
-          />
+            <Route
+              path='/profile' exact
+              element={<ProtectedRoute
+                onUpdate={handleUpdateUser}
+                loggedIn={loggedIn}
+                component={Profile}
+                onSignOut={handleSignOut}
+                path='/profile' />
+              }
+            />
 
-          <Route path='/signup' exact
-            element={loggedIn ? <Navigate to='/movies' /> : <Register onRegister={handleRegister} />}
-          />
+            <Route path='/signup' exact
+              element={loggedIn
+                ? <Navigate to='/movies' />
+                : <Register onRegister={handleRegister} isError={isError} />}
+            />
 
-          <Route path='/signin' exact
-            element={loggedIn ? <Navigate to='/movies' /> : <Login onLogin={handleLogin} />}
-          />
+            <Route path='/signin' exact
+              element={loggedIn
+                ? <Navigate to='/movies' />
+                : <Login onLogin={handleLogin} isError={isError} />}
+            />
 
-          <Route path='*' exact
-            element={<PageNotFound />}
-          />
-        </Routes>
+            <Route path='*' exact
+              element={<PageNotFound />}
+            />
+          </Routes>
 
-      </BrowserRouter>
+        </BrowserRouter>
+      </SavedMoviesContext.Provider>
     </CurrentUserContext.Provider>
   );
 };

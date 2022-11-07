@@ -1,5 +1,5 @@
 import './MoviesCardList.css';
-// import Preloader from '../Movies/Preloader/Preloader';
+import Preloader from '../Movies/Preloader/Preloader';
 import React, { useEffect, useState } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard'
 
@@ -15,7 +15,7 @@ function getPageOptions() {
   return pageSizeOptions[optionKey]
 }
 
-function MoviesCardList({ isSavedMovies, list }) {
+function MoviesCardList({ isSavedMovies, list, onToggleSaved, loading }) {
   const [pageOptions, setPageOptions] = useState(getPageOptions())
   const [page, setPage] = useState(0)
 
@@ -45,12 +45,20 @@ function MoviesCardList({ isSavedMovies, list }) {
 
   return (
     <section className='movies-list'>
-      {/* <Preloader /> */}
-      <div className='movies-list__conrainer'>
-        {listToDisplay.map((v, i) => (
-          <MoviesCard movie={v} key={v.id} isSavedMovies={isSavedMovies} />
-        ))}
-      </div>
+      {loading && <Preloader />}
+      {(!Array.isArray(listToDisplay) || listToDisplay.length === 0)
+        ? <p>Ничего не найдено</p>
+        : <div className='movies-list__conrainer'>
+          {listToDisplay.map((v, i) => (
+            <MoviesCard
+              movie={v}
+              key={v.id || v._id}
+              onToggleSaved={onToggleSaved}
+              isSavedMovies={isSavedMovies}
+            />
+          ))}
+        </div>
+      }
       {hasMore && (
         <button
           onClick={handleShowMore}

@@ -36,7 +36,7 @@ class MainApi {
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-            credentials: 'include',
+            // credentials: 'include',
             body: JSON.stringify({
                 name,
                 email,
@@ -76,9 +76,9 @@ class MainApi {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                authorization: this._token,
+                ...getAuthHeader(),
             },
-            credentials: 'include',
+            // credentials: 'include',
             body: JSON.stringify({
                 country: country || 'unknown country',
                 director,
@@ -86,7 +86,7 @@ class MainApi {
                 year,
                 description,
                 image,
-                trailer: trailerLink,
+                trailerLink,
                 nameRU: nameRU || 'empty name',
                 nameEN: nameEN || 'empty name',
                 thumbnail,
@@ -103,7 +103,7 @@ class MainApi {
             headers: {
                 ...getAuthHeader(),
             },
-            credentials: 'include',
+            // credentials: 'include',
         })
             .then((res) => this._checkStatus(res))
     };
@@ -163,19 +163,19 @@ class MainApi {
     //         .catch((err) => console.log(err));
     // }
 
-    signout() {
-        return fetch(`${this._baseUrl}/signout`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                ...getAuthHeader(),
-            }
-        })
-            .then((res) => this._checkStatus(res))
-            .catch((err) => console.log(err));
-    };
+    // signout() {
+    //     return fetch(`${this._baseUrl}/signout`, {
+    //         method: 'POST',
+    //         // credentials: 'include',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json',
+    //             ...getAuthHeader(),
+    //         }
+    //     })
+    //         .then((res) => this._checkStatus(res))
+    //         .catch((err) => console.log(err));
+    // };
 };
 
 //создаем экземпляр класса

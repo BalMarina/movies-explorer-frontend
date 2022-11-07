@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Header from '../Header/Header';
 import { useFormWithValidation } from '../../hooks/useForm';
+import Errors from '../Errors/Errors';
 
 function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
 
@@ -35,7 +36,8 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdate(values.name, values.email);
+    onUpdate(values.name || currentUser.name, values.email || currentUser.email);
+    setIsClicked(!isClicked);
   };
 
   function handleEditProfile() {
@@ -55,6 +57,7 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
           <form className='profile__form' onSubmit={handleSubmit}>
             <label className='profile__label'>Имя
               <input
+                name="name"
                 className='profile__input'
                 value={values.name}
                 onChange={handleChange}
@@ -63,13 +66,16 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
                 minLength='2'
                 maxLength='30'
                 required
-                title='Разрешено использовать латиницу, кириллицу, пробел или дефис'
                 pattern='^[A-Za-zА-Яа-яЁё /s -]+$'
               >
               </input>
+              <Errors isShown={Boolean(errors.name)}>
+                Проверьте, заполнено ли поле - оно должно содержать латиницу, кириллицу, пробел или дефис
+              </Errors>
             </label>
             <label className='profile__label'>Email
               <input
+                name="email"
                 type='email'
                 className='profile__input'
                 value={values.email}
@@ -78,40 +84,44 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
                 minLength='2'
                 maxLength='30'
                 required
+                pattern='^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
               >
               </input>
+              <Errors isShown={Boolean(errors.email)}>
+                Проверьте, что поле заполнено и соответствует стандартам email: name@example.com
+              </Errors>
             </label>
+            {!isClicked ? (
+              <>
+                <button
+                  className={`profile__button profile__button_edit`}
+                  type='button'
+                  onClick={handleEditProfile}
+                >
+                  Редактировать
+                </button>
+                <button
+                  className='profile__button profile__button_logout'
+                  type='button'
+                  onClick={onSignOut}
+                >
+                  Выйти из аккаунта
+                </button>
+              </>
+            ) : (
+              <button
+                className={`profile__button profile__button_submit `}
+                type='submit'
+                // onClick={handleEditClick}
+                // onSubmit={handleSubmit}
+                disabled={!isValid}
+              >
+                Сохранить
+              </button>
+            )
+            }
           </form>
         </div>
-        {!isClicked ? (
-          <>
-            <button
-              className={`profile__button profile__button_edit`}
-              type='button'
-              onClick={handleEditProfile}
-            >
-              Редактировать
-            </button>
-            <button
-              className='profile__button profile__button_logout'
-              type='button'
-            // onClick={handleEditProfile}
-            >
-              Выйти из аккаунта
-            </button>
-          </>
-        ) : (
-          <button
-            className={`profile__button profile__button_submit `}
-            type='submit'
-            onClick={handleEditClick}
-            onSubmit={handleSubmit}
-            disabled={!isValid}
-          >
-            Сохранить
-          </button>
-        )
-        }
       </section>
     </>
   );

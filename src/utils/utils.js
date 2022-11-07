@@ -1,24 +1,47 @@
-// // ---ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ---
 
-// // ф-ия фильтрации фильмов по длительности
 export function filterShorts(movies) {
     return movies.filter((item) => item.duration < 40);
 };
 
-// // ф-ия фильтрации фильмов по запросу и длительности
-export function filterMovies(movies, searchQuery, shortFilms) {
-    const moviesByQuery = movies.filter((item) => {
-        const strRu = String(item.nameRU).toLowerCase();
-        const strEn = String(item.nameEN).toLowerCase();
-        const searchStr = searchQuery.toLowerCase().trim();
-        return (strRu.indexOf(searchStr) !== -1 || strEn.indexOf(searchStr) !== -1);
-    });
+export function filterMovies(movies, query, isShorts) {
+    const searchParams = ['nameEN', 'nameRU'];
+    const q = query.toLowerCase().trim()
 
-    if (shortFilms === 'on') {
-        return filterShorts(moviesByQuery);
+    let result = movies
+
+    if (q) {
+        result = result
+            .filter(
+                movie => searchParams.some(
+                    param => movie[param]
+                        .toLowerCase()
+                        .trim()
+                        .includes(q)
+                )
+            )
     }
-    return moviesByQuery;
-};
+
+    if (isShorts === true) {
+        result = result.filter(movie => movie.duration <= 40)
+    }
+
+    return result
+}
+
+// // ф-ия фильтрации фильмов по запросу и длительности
+// export function filterMovies(movies, searchQuery, shortFilms) {
+//     const moviesByQuery = movies.filter((item) => {
+//         const strRu = String(item.nameRU).toLowerCase();
+//         const strEn = String(item.nameEN).toLowerCase();
+//         const searchStr = searchQuery.toLowerCase().trim();
+//         return (strRu.indexOf(searchStr) !== -1 || strEn.indexOf(searchStr) !== -1);
+//     });
+
+//     if (shortFilms === 'on') {
+//         return filterShorts(moviesByQuery);
+//     }
+//     return moviesByQuery;
+// };
 
 // // ф-ия проверки ссылок изображений на осутствие и их преобразование
 // export function changeMovies(movies) {
@@ -33,16 +56,35 @@ export function filterMovies(movies, searchQuery, shortFilms) {
 //   });
 // };
 
-// // ф-ия получения сохраненной карточки фильма
 export function getSavedMovieCard(arr, id) {
     return arr.find((item) => {
         return item.movieId === id;
     });
 };
 
-// // ф-ия преобразования времени
-// export function getTimeFromMin(mins) {
-//   const hours = Math.trunc(mins/60);
-//   const minutes = mins % 60;
-//   return `${hours}ч ${minutes}м`;
-// };
+export function moviesApiToDisplayData(apiMovies) {
+    return apiMovies.map(v => ({
+        ...v,
+        movieId: v.id,
+        image: v.image.url,
+    }))
+}
+
+export function getLocalStorageIfExists(key) {
+    const storedJSON = localStorage.getItem(key)
+    try {
+        return JSON.parse(storedJSON)
+    } catch (e) {
+        console.log(e)
+    }
+    return null
+}
+
+export function getTransformTime(mins) {
+    const hours = Math.trunc(mins / 60);
+    const minutes = mins % 60;
+    if (hours < 1) {
+        return `${minutes}м`
+    }
+    return `${hours}ч ${minutes}м`;
+};
