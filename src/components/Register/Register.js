@@ -1,8 +1,7 @@
 import './Register.css';
-import { useState } from 'react';
 import Errors from '../Errors/Errors';
 import Logo from '../../images/logo.svg'
-import { useFormWithValidation } from '../../hooks/useForm';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 
 function Register({ onRegister }) {
 
@@ -28,7 +27,7 @@ function Register({ onRegister }) {
             <input
               name="name"
               className='register__input'
-              value={values.name}
+              value={values.name || ''}
               onChange={handleChange}
               type='text'
               minLength='2'
@@ -45,7 +44,7 @@ function Register({ onRegister }) {
             <input
               name='email'
               className='register__input'
-              value={values.email}
+              value={values.email || ''}
               onChange={handleChange}
               type='email'
               minLength='2'
@@ -61,7 +60,7 @@ function Register({ onRegister }) {
             <input
               name='password'
               className='register__input'
-              value={values.password}
+              value={values.password || ''}
               onChange={handleChange}
               type='password'
               minLength='6'

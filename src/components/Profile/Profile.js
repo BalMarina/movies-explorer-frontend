@@ -2,10 +2,10 @@ import './Profile.css';
 import React, { useState, useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Header from '../Header/Header';
-import { useFormWithValidation } from '../../hooks/useForm';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 import Errors from '../Errors/Errors';
 
-function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
+function Profile({ onSignOut, onUpdate }) {
 
   const currentUser = useContext(CurrentUserContext);
 
@@ -22,17 +22,11 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
     }
   }, [resetForm, currentUser]);
 
-  React.useEffect(() => {
-    if (currentUser.name === values.name && currentUser.email === values.email) {
-      resetForm(false);
-    }
-  }, [resetForm, values, currentUser]);
-
   // React.useEffect(() => {
-  //   if (infoMessage.isShown && infoMessage.code === 200) {
-  //     setIsInputActive(false);
+  //   if (currentUser.name === values.name && currentUser.email === values.email) {
+  //     resetForm(false);
   //   }
-  // }, [setIsInputActive]);
+  // }, [resetForm, values, currentUser]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -45,12 +39,9 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
     setIsClicked(!isClicked)
   };
 
-  function handleEditClick() {
-    setIsClicked(!isClicked)
-  }
-
   return (
-    <><Header />
+    <>
+      <Header />
       <section className='profile'>
         <div className='profile__container'>
           <h1 className='profile__title'>{`Привет, ${currentUser.name}!`}</h1>
@@ -59,7 +50,7 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
               <input
                 name="name"
                 className='profile__input'
-                value={values.name}
+                value={values.name || ''}
                 onChange={handleChange}
                 disabled={!isInputActive}
                 type='text'
@@ -78,7 +69,7 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
                 name="email"
                 type='email'
                 className='profile__input'
-                value={values.email}
+                value={values.email || ''}
                 onChange={handleChange}
                 disabled={!isInputActive}
                 minLength='2'
@@ -112,8 +103,6 @@ function Profile({ onSignOut, onUpdate, infoMessage, onChange }) {
               <button
                 className={`profile__button profile__button_submit `}
                 type='submit'
-                // onClick={handleEditClick}
-                // onSubmit={handleSubmit}
                 disabled={!isValid}
               >
                 Сохранить

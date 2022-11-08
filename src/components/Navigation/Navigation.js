@@ -8,17 +8,12 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 function Navigation() {
 
     const [isClicked, setIsClicked] = useState(false);
-    // const [isLogged, setIsLogged] = useState(true);
     const userContext = useContext(CurrentUserContext)
     const isLogged = userContext?.email
 
     function handleMenuClick() {
         setIsClicked(!isClicked)
     }
-
-    // function handelLogin() {
-    //     setIsLogged(!isLogged)
-    // }
 
     return (
         <nav className={`menu ${isClicked ? 'menu_open' : ''}`} >
@@ -33,7 +28,6 @@ function Navigation() {
                         <div className={`menu__box ${isClicked ? 'menu__box_open' : ''}`}>
                             <div className='menu__wrapper'>
                                 <NavLink
-                                    // exact 
                                     to='/' className='menu__film-link'>
                                     Главная
                                 </NavLink>

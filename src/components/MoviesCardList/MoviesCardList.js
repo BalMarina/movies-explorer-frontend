@@ -15,10 +15,9 @@ function getPageOptions() {
   return pageSizeOptions[optionKey]
 }
 
-function MoviesCardList({ isSavedMovies, list, onToggleSaved, loading }) {
+function MoviesCardList({ isSavedMovies, list, onToggleSaved, loading, searchClicked }) {
   const [pageOptions, setPageOptions] = useState(getPageOptions())
   const [page, setPage] = useState(0)
-
   const { initial, pageSize } = pageOptions;
 
   const displayMoviesAmount = initial + page * pageSize;
@@ -47,7 +46,11 @@ function MoviesCardList({ isSavedMovies, list, onToggleSaved, loading }) {
     <section className='movies-list'>
       {loading && <Preloader />}
       {(!Array.isArray(listToDisplay) || listToDisplay.length === 0)
-        ? <p>Ничего не найдено</p>
+        ? (
+          <>
+            {searchClicked && <p>Ничего не найдено</p>}
+          </>
+        )
         : <div className='movies-list__conrainer'>
           {listToDisplay.map((v, i) => (
             <MoviesCard

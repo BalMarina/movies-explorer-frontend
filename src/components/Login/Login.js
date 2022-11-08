@@ -1,6 +1,5 @@
 import './Login.css';
-import { useState } from 'react';
-import { useFormWithValidation } from '../../hooks/useForm';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
 import Errors from '../Errors/Errors';
 import Logo from '../../images/logo.svg'
 
@@ -26,7 +25,7 @@ function Login({ onLogin }) {
             <input
               name='email'
               className='login__input'
-              value={values.email}
+              value={values.email || ''}
               onChange={handleChange}
               type='email'
               minLength='2'
@@ -40,11 +39,12 @@ function Login({ onLogin }) {
           <label className='login__label'>Пароль
             <input
               name='password'
-              className='login__input' value={values.password}
+              className='login__input'
+              value={values.password || ''}
               onChange={handleChange}
               type='password'
-              minLength='4'
-              maxLength='20'
+              minLength='6'
+              maxLength='40'
               required>
             </input>
             <Errors isShown={Boolean(errors.password)}>

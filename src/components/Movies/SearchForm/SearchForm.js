@@ -7,7 +7,7 @@ function SearchForm({
     initialState = { search: '', isShorts: false },
     disabled = false,
 }) {
-    const [searchValue, setSearchValue] = useState(initialState.search)
+    const [searchValue, setSearchValue] = useState(initialState.search || '')
     const [isShorts, setIsShorts] = useState(initialState.isShorts)
 
     const handleSubmit = (e) => {
@@ -35,7 +35,7 @@ function SearchForm({
                         type='text'
                         placeholder='Фильм'
                         required
-                        value={searchValue}
+                        value={searchValue || ''}
                         disabled={disabled}
                     />
                     <button
@@ -49,6 +49,7 @@ function SearchForm({
                         type='checkbox'
                         name='shortFilms'
                         id="shortFilms"
+                        value={isShorts}
                         checked={isShorts}
                         onChange={handleIsShortsChange}
                         disabled={disabled}

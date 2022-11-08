@@ -1,11 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
+import { Route, Routes, BrowserRouter, useNavigate, Navigate } from 'react-router-dom';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-// import Header from '../Header/Header';
-// import Footer from '../Footer/Footer';
 import Main from '../Main/Main';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
@@ -13,8 +11,8 @@ import Profile from '../Profile/Profile';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import PageNotFound from '../PageNotFound/PageNotFound';
-// import Preloader from '../Preloader/Preloader';
 import mainApi from '../../utils/MainApi';
+import Preloader from '../Movies/Preloader/Preloader';
 
 function App() {
 
@@ -22,6 +20,7 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [savedMovies, setSavedMovies] = React.useState([]);
   const [isError, setIsError] = useState('');
+  const [processing, setProcessing] = useState(true)
 
   React.useEffect(() => {
     tokenCheck()
@@ -29,14 +28,15 @@ function App() {
 
   React.useEffect(() => {
     if (loggedIn === true) {
-      // Navigate('/')
-      mainApi.getUserData()
-        .then(data => {
-          setCurrentUser(data);
-        })
-        .catch(err => {
-          console.log(err);
-        })
+      if (!currentUser?._id) {
+        mainApi.getUserData()
+          .then(data => {
+            setCurrentUser(data);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
 
       mainApi.getMovies()
         .then((data) => {
@@ -56,12 +56,23 @@ function App() {
 
   function tokenCheck() {
     const token = localStorage.getItem('jwt')
-    if (token) {
-      mainApi.getUserData().then((res) => {
-        if (res) {
-          setLoggedIn(true)
-        }
-      })
+    if (token && !loggedIn) {
+      setProcessing(true)
+      mainApi.getUserData()
+        .then((res) => {
+          if (res) {
+            setCurrentUser(res);
+            setLoggedIn(true)
+          }
+        })
+        .catch(() => {
+          setLoggedIn(false)
+        })
+        .finally(() => {
+          setProcessing(false)
+        })
+    } else {
+      setProcessing(false)
     }
   }
 
@@ -98,32 +109,8 @@ function App() {
     setLoggedIn(false);
     setCurrentUser({});
     localStorage.clear();
-    Navigate('/');
+    return <Navigate to="/" />;
   };
-
-  // function handleSaveMovie(movie) {
-  //   const isLSaved = movie.likes.some(i => i._id === currentUser._id);
-
-  //   mainApi.saveMovie(movie, !isLSaved)
-  //     .then((isSavedMovies) => {
-  //       setSavedMovies((state) =>
-  //         state.map((c) => c._id === movie._id ? isSavedMovies : c));
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     })
-  // }
-
-  function handleDeleteMovie(movie) {
-    mainApi.deleteMovie(movie._id)
-      .then(() => {
-        setSavedMovies((state) =>
-          state.filter((c) => c._id !== movie._id));
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }
 
   function handleUpdateUser(name, email) {
     mainApi.updateUserProfile(name, email)
@@ -151,6 +138,10 @@ function App() {
       .then(() => {
         setSavedMovies(state => state.filter(v => v._id !== movie._id));
       })
+  }
+
+  if (processing) {
+    return <Preloader />
   }
 
   return (

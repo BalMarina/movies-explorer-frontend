@@ -1,5 +1,4 @@
 import './MoviesCard.css';
-// import film from '../../images/film1.jpg';
 import { useState } from 'react';
 import { getTransformTime } from '../../utils/utils';
 
@@ -20,9 +19,9 @@ function getImageUrl(movie) {
 function MoviesCard({ movie, onToggleSaved, isSavedMovies }) {
     const [processing, setProcessing] = useState(false)
 
-    let isSavedClass = ''
-    if (movie?.isSaved) {
-        isSavedClass = isSavedMovies ? 'movie__delete-btn' : 'movie__save-btn_active'
+    let isSavedClass = isSavedMovies ? 'movie__delete-btn' : ''
+    if (!isSavedMovies && movie?.isSaved) {
+        isSavedClass = 'movie__save-btn_active'
     }
 
     function handleToggleSave() {

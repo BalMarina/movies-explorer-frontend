@@ -1,4 +1,3 @@
-// import { BASE_URL } from './constants';
 function getAuthHeader() {
     return { authorization: `Bearer ${localStorage.getItem('jwt')}` }
 }
@@ -17,18 +16,15 @@ class MainApi {
         return Promise.reject(`Ошибка: ${res.status}`)
     }
 
-    //метод получения информации о пользователе с сервера
     getUserData() {
         return fetch(this._userUrl, {
             headers: {
                 ...getAuthHeader(),
             }
-            // credentials: 'include',
         })
             .then((res) => this._checkStatus(res))
     };
 
-    // метод сохранения отредактированных данных пользователя на сервере
     updateUserProfile(name, email) {
         return fetch(this._userUrl, {
             method: 'PATCH',
@@ -36,7 +32,6 @@ class MainApi {
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-            // credentials: 'include',
             body: JSON.stringify({
                 name,
                 email,
@@ -47,18 +42,15 @@ class MainApi {
             })
     };
 
-    // метод получения избранных пользователем фильмов с сервера
     getMovies() {
         return fetch(this._moviesUrl, {
             headers: {
                 ...getAuthHeader(),
             },
-            // credentials: 'include',
         })
             .then((res) => this._checkStatus(res))
     };
 
-    // метод добавления нового фильма в избранное (создание карточки)
     saveMovie({
         country,
         director,
@@ -78,7 +70,6 @@ class MainApi {
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-            // credentials: 'include',
             body: JSON.stringify({
                 country: country || 'unknown country',
                 director,
@@ -96,14 +87,12 @@ class MainApi {
             .then((res) => this._checkStatus(res))
     };
 
-    //метод удаления карточки пользователя с сервера
     deleteMovie(movieId) {
         return fetch(`${this._moviesUrl}/${movieId}`, {
             method: 'DELETE',
             headers: {
                 ...getAuthHeader(),
             },
-            // credentials: 'include',
         })
             .then((res) => this._checkStatus(res))
     };
@@ -111,7 +100,6 @@ class MainApi {
     register(name, email, password) {
         return fetch(`${this._baseUrl}/signup`, {
             method: 'POST',
-            // credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -131,7 +119,6 @@ class MainApi {
     login(email, password) {
         return fetch(`${this._baseUrl}/signin`, {
             method: 'POST',
-            // credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -147,38 +134,8 @@ class MainApi {
             .catch((err) => console.log(err));
     };
 
-    // getContent() {
-    //     return fetch(`${this._baseUrl}/`, {
-    //         method: 'GET',
-    //         credentials: 'include',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             ...getAuthHeader(),
-    //         }
-    //     })
-    //         .then(res => {
-    //             return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
-    //         })
-    //         .then(data => data)
-    //         .catch((err) => console.log(err));
-    // }
-
-    // signout() {
-    //     return fetch(`${this._baseUrl}/signout`, {
-    //         method: 'POST',
-    //         // credentials: 'include',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json',
-    //             ...getAuthHeader(),
-    //         }
-    //     })
-    //         .then((res) => this._checkStatus(res))
-    //         .catch((err) => console.log(err));
-    // };
 };
 
-//создаем экземпляр класса
 const mainApi = new MainApi({
     baseUrl: 'https://balmary.nomoredomains.club/api',
 });

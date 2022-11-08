@@ -2,29 +2,30 @@ import './SavedMovies.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import SearchForm from '../Movies/SearchForm/SearchForm';
 import { SavedMoviesContext } from '../../contexts/SavedMoviesContext';
 import { filterMovies } from '../../utils/utils';
 
 function SavedMovies({ onMovieSave }) {
-  const [isMoviesLoading, setIsMoviesLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
+  const [searchClicked, setSearchClicked] = React.useState(false);
   const savedMovies = useContext(SavedMoviesContext)
-  const initialMoviesToDisplay = savedMovies.map(v => ({ ...v, isSaved: true }))
-  const [moviesToDisplay, setMoviesToDisplay] = useState(initialMoviesToDisplay)
+  const [moviesToDisplay, setMoviesToDisplay] = useState(savedMovies)
+
+  useEffect(() => {
+    setMoviesToDisplay(savedMovies)
+  }, [savedMovies])
 
   function handleToggleSaved(movie) {
-    return onMovieSave(movie)
+    return onMovieSave({ ...movie, isSaved: true })
       .catch((err) => {
-        setIsError(true);
         console.log(err);
       })
-      .finally(() => setIsMoviesLoading(false))
   }
 
   function handleSearchClick(query, isShorts) {
-    setMoviesToDisplay(filterMovies(initialMoviesToDisplay, query, isShorts))
+    setSearchClicked(true)
+    setMoviesToDisplay(filterMovies(savedMovies, query, isShorts))
   }
 
   return (
@@ -36,6 +37,7 @@ function SavedMovies({ onMovieSave }) {
           list={moviesToDisplay}
           onToggleSaved={handleToggleSaved}
           isSavedMovies
+          searchClicked={searchClicked}
         />
       </section>
       <Footer />
