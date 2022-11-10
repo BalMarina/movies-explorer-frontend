@@ -13,6 +13,8 @@ function Profile({ onSignOut, onUpdate }) {
   const { values, errors, isValid, handleChange, resetForm } = useFormWithValidation();
   const [isInputActive, setIsInputActive] = useState(false);
 
+  const hasChanges = ['name', 'email'].some(key => currentUser[key] !== values[key])
+
   React.useEffect(() => {
     if (currentUser) {
       resetForm({
@@ -103,7 +105,7 @@ function Profile({ onSignOut, onUpdate }) {
               <button
                 className={`profile__button profile__button_submit `}
                 type='submit'
-                disabled={!isValid}
+                disabled={!hasChanges || !isValid}
               >
                 Сохранить
               </button>
