@@ -18,7 +18,7 @@ function Register({ onRegister }) {
   return (
     <section className='register'>
       <div className='register__container'>
-        <img src={Logo} alt='' className='register__logo' />
+        <a href='/' className='register__logo'><img src={Logo} alt='' /></a>
         <h1 className='register__title'>Добро пожаловать!</h1>
         <form
           className='register__form'

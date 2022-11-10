@@ -18,7 +18,7 @@ function Login({ onLogin }) {
   return (
     <section className='login'>
       <div className='login__container'>
-        <img src={Logo} alt='' className='login__logo' />
+        <a href='/' className='login__logo'><img src={Logo} alt='' /></a>
         <h1 className='login__title'>Рады видеть!</h1>
         <form className='login__form' onSubmit={handleSubmit}>
           <label className='login__label'>Email
