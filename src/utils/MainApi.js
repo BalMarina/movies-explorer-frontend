@@ -10,8 +10,13 @@ class MainApi {
     };
 
     _checkStatus(res) {
+        console.log(res)
         if (res.ok) {
             return res.json()
+        }
+        if (res.status === 401) {
+            localStorage.clear();
+            return window.location.pathname = '/'
         }
         return Promise.reject(`Ошибка: ${res.status}`)
     }
