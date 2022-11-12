@@ -1,24 +1,22 @@
 import './Navigation.css';
 import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Icon from '../../images/account-icon.svg'
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 
 function Navigation() {
 
     const [isClicked, setIsClicked] = useState(false);
-    const [isLogged, setIsLogged] = useState(true);
+    const userContext = useContext(CurrentUserContext)
+    const isLogged = userContext?.email
 
     function handleMenuClick() {
         setIsClicked(!isClicked)
     }
 
-    function handelLogin() {
-        setIsLogged(!isLogged)
-    }
-
     return (
-        <nav className={`menu ${isClicked ? 'menu_open' : ''}`}>
+        <nav className={`menu ${isClicked ? 'menu_open' : ''}`} >
             <div className={`${isClicked ? 'menu__layout' : ''} `}>
                 {isLogged ? (
                     <>
@@ -30,7 +28,6 @@ function Navigation() {
                         <div className={`menu__box ${isClicked ? 'menu__box_open' : ''}`}>
                             <div className='menu__wrapper'>
                                 <NavLink
-                                    // exact 
                                     to='/' className='menu__film-link'>
                                     Главная
                                 </NavLink>

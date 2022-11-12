@@ -1,11 +1,11 @@
-.message {
+.error {
     width: 100%;
     margin-top: auto;
     min-height: 13px;
     margin-bottom: 20px;
 }
 
-.message__text {
+.error__text {
     font-weight: 400;
     font-size: 11px;
     line-height: 13px;
@@ -14,7 +14,7 @@
 }
 
 @media screen and (max-width: 769px) {
-    .message {
+    .error {
         margin-top: 0;
     }
 

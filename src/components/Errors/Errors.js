@@ -1,21 +1,17 @@
 import './Errors.css';
-import React, { useState } from 'react';
+import React from 'react';
 
-function Errors({ isShown, message, code, type }) {
+function Errors({ isShown, children }) {
 
-    const [isError, setIsError] = useState(true);
-
-    function handleError() {
-        setIsError(!isError)
+    if (!isShown) {
+        return null
     }
 
     return (
-        <div className='message'>
-            {isError ? (
-                <p className='message__text'>
-                    Что-то пошло не так...
-                </p>
-            ) : null}
+        <div className='error'>
+            <p className='error__text'>
+                {children}
+            </p>
         </div>
     );
 };

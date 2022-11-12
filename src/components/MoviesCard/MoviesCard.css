@@ -24,6 +24,7 @@
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
+  max-width: calc(100% - 38px);
 }
 
 .movie__title {

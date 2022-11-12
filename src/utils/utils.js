@@ -1,48 +1,62 @@
-// // ---ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ---
 
-// // ф-ия фильтрации фильмов по длительности
-// export function filterShortMovies(movies){
-//   return movies.filter((item) => item.duration < 40);
-// };
+export function filterShorts(movies) {
+    return movies.filter((item) => item.duration < 40);
+};
 
-// // ф-ия фильтрации фильмов по запросу и длительности
-// export function filterMovies(movies, searchQuery, shortFilms) {
-//   const moviesByQuery =  movies.filter((item) => {
-//     const strRu = String(item.nameRU).toLowerCase();
-//     const strEn = String(item.nameEN).toLowerCase();
-//     const searchStr = searchQuery.toLowerCase().trim();
-//     return (strRu.indexOf(searchStr) !== -1 || strEn.indexOf(searchStr) !== -1);
-//   });
+export function filterMovies(movies = [], query = '', isShorts = false) {
+    const searchParams = ['nameEN', 'nameRU'];
+    const q = query.toLowerCase().trim()
 
-//   if(shortFilms === 'on'){
-//     return filterShortMovies(moviesByQuery);
-//   }
-//   return moviesByQuery;
-// };
+    let result = movies
 
-// // ф-ия проверки ссылок изображений на осутствие и их преобразование
-// export function changeMovies(movies) {
-//   movies.forEach(movie => {
-//     if(!movie.image){
-//       movie.image = 'https://g2.dcdn.lt/images/pix/kinas-76443525.jpg';
-//       movie.thumbnail = 'https://g2.dcdn.lt/images/pix/kinas-76443525.jpg'
-//     } else {
-//       movie.thumbnail = `https://api.nomoreparties.co${movie.image.formats.thumbnail.url}`
-//       movie.image = `https://api.nomoreparties.co${movie.image.url}`
-//     }
-//   });
-// };
+    if (q) {
+        result = result
+            .filter(
+                movie => searchParams.some(
+                    param => movie[param]
+                        .toLowerCase()
+                        .trim()
+                        .includes(q)
+                )
+            )
+    }
 
-// // ф-ия получения сохраненной карточки фильма
-// export function getSavedMovieCard(arr, id) {
-//   return arr.find((item) => {
-//     return item.movieId === id;
-//   });
-// };
+    if (isShorts === true) {
+        result = result.filter(movie => movie.duration <= 40)
+    }
 
-// // ф-ия преобразования времени
-// export function getTimeFromMin(mins) {
-//   const hours = Math.trunc(mins/60);
-//   const minutes = mins % 60;
-//   return `${hours}ч ${minutes}м`;
-// };
+    return result
+}
+
+export function getSavedMovieCard(arr, id) {
+    return arr.find((item) => {
+        return item.movieId === id;
+    });
+};
+
+export function moviesApiToDisplayData(apiMovies) {
+    return apiMovies.map(v => ({
+        ...v,
+        movieId: v.id,
+        image: v.image.url,
+    }))
+}
+
+export function getLocalStorageIfExists(key) {
+    const storedJSON = localStorage.getItem(key)
+    try {
+        return JSON.parse(storedJSON)
+    } catch (e) {
+        console.log(e)
+    }
+    return null
+}
+
+export function getTransformTime(mins) {
+    const hours = Math.trunc(mins / 60);
+    const minutes = mins % 60;
+    if (hours < 1) {
+        return `${minutes}м`
+    }
+    return `${hours}ч ${minutes}м`;
+};

@@ -16,6 +16,11 @@
     align-self: flex-start;
 }
 
+.register__logo:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
 .register__title {
     font-weight: 500;
     font-size: 24px;
@@ -66,6 +71,15 @@
     align-self: center;
     margin-top: 157px;
     cursor: pointer;
+}
+
+.register__button:hover {
+    opacity: .7;
+}
+
+.register__button:disabled {
+    opacity: .7;
+    cursor: auto;
 }
 
 .register__signin-text {

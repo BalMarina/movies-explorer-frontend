@@ -1,28 +1,66 @@
 import './Login.css';
+import { useFormWithValidation } from '../../hooks/useFormWithValidation';
+import Errors from '../Errors/Errors';
 import Logo from '../../images/logo.svg'
 
-function Login({ onLogin, infoMessage }) {
+function Login({ onLogin }) {
+
+  const { values, errors, isValid, handleChange } = useFormWithValidation();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!values.email || !values.password) {
+      return;
+    }
+    onLogin(values.email, values.password);
+  }
 
   return (
     <section className='login'>
       <div className='login__container'>
-        <img src={Logo} alt='' className='login__logo' />
+        <a href='/' className='login__logo'><img src={Logo} alt='' /></a>
         <h1 className='login__title'>Рады видеть!</h1>
-        <form className='login__form'>
+        <form className='login__form' onSubmit={handleSubmit}>
           <label className='login__label'>Email
-            <input className='login__input'></input>
+            <input
+              name='email'
+              className='login__input'
+              value={values.email || ''}
+              onChange={handleChange}
+              type='email'
+              minLength='2'
+              maxLength='30'
+              required>
+            </input>
+            <Errors isShown={Boolean(errors.email)}>
+              Проверьте, что поле заполнено и соответствует стандартам email: name@example.com
+            </Errors>
           </label>
           <label className='login__label'>Пароль
-            <input className='login__input'></input>
+            <input
+              name='password'
+              className='login__input'
+              value={values.password || ''}
+              onChange={handleChange}
+              type='password'
+              minLength='6'
+              maxLength='40'
+              required>
+            </input>
+            <Errors isShown={Boolean(errors.password)}>
+              Пароль не может быть короче 6 символов
+            </Errors>
           </label>
+          <button
+            className='login__button'
+            type='submit'
+            onSubmit={handleSubmit}
+            disabled={!isValid}
+          >
+            Войти
+          </button>
         </form>
       </div>
-      <button
-        className='login__button'
-        type='button'
-      >
-        Войти
-      </button>
       <p
         className='login__signup-text'
       >
